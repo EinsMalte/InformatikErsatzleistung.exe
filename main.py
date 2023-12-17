@@ -65,6 +65,7 @@ clock = pygame.time.Clock()
 mixer.init()
 mixer.music.load("music.mp3")
 mixer.music.play(-1)
+mixer.music.set_volume(.2)
 
 def onBackspace():
     global entry_text, entryPrime
