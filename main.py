@@ -1,19 +1,22 @@
-# Ist es eine Primzahl?
-# Aufgabe 1 der Klausurersatzleistung mit Herrn Grünke
-
-# Bitte pygame und mixer installieren
+### Informatik Klausurersatzleistung
+#   Fachlehrer: Herr Grünke
+#   Code von: Arasp, Nick, Tobias und Malte
+#   Datum: 18.12.2023
+#   Dependencies: pygame, math
+### Aufgabe 1 (Primzahlenerkennung)
 
 # Importe
-import math  # Mathematische Funktionen wie z.B. Wurzel
-import pygame  # Pygame für die GUI
-from pygame import mixer  # Pygame für die Musik
+import math
+import pygame
+from pygame import mixer
 
-breite, höhe = 800, 600  # Fenstergröße
+# Konfiguration
+fenster_breite, fenster_höhe = 800, 600
+fps = 60
 
-
-# isPrime Funktion
+### Funktionen
+# Primzahlenerkennung
 def ist_es_eine_primzahl(n, konsolenausgabe=False):
-    # returns True or False
     # Wenn n = 2 wird True ausgegeben
     if n == 2:
         return True  # Funktion hier beendet
@@ -40,27 +43,26 @@ def ist_es_eine_primzahl(n, konsolenausgabe=False):
             return False
         i += 2
 
-
 # Code für pygame als GUI
-nutzereingabe = ""  # Text in der Eingabe
-eingabe_ist_primzahl = False  # Ist die Eingabe eine Primzahl?
-programm_läuft = True  # Läuft das Programm?
+nutzereingabe: str = ""             # Text in der Eingabe
+eingabe_ist_primzahl: bool = False  # Ist die Eingabe eine Primzahl?
+programm_läuft: bool = True         # Läuft das Programm?
 
 pygame.init()
-screen = pygame.display.set_mode((breite, höhe))
+screen = pygame.display.set_mode((fenster_breite, fenster_höhe))
 pygame.display.set_caption("Ist es eine Primzahl.png")
 
 hintergrund_neutral = pygame.image.load("MathemannNEUTRAL.png")
-hintergrund_neutral = pygame.transform.scale(hintergrund_neutral, (breite, höhe))
+hintergrund_neutral = pygame.transform.scale(hintergrund_neutral, (fenster_breite, fenster_höhe))
 
 hintergrund_happy = pygame.image.load("MathemannHAPPY.png")
-hintergrund_happy = pygame.transform.scale(hintergrund_happy, (breite, höhe))
+hintergrund_happy = pygame.transform.scale(hintergrund_happy, (fenster_breite, fenster_höhe))
 
 hintergrund_sad = pygame.image.load("MathemannSAD.png")
-hintergrund_sad = pygame.transform.scale(hintergrund_sad, (breite, höhe))
+hintergrund_sad = pygame.transform.scale(hintergrund_sad, (fenster_breite, fenster_höhe))
 
-eingabefeld = pygame.Rect(0, 0, breite - 100, 80)
-eingabefeld.center = (breite // 2, höhe - 100)
+eingabefeld = pygame.Rect(0, 0, fenster_breite - 100, 80)
+eingabefeld.center = (fenster_breite // 2, fenster_höhe - 100)
 
 clock = pygame.time.Clock()
 
@@ -108,7 +110,7 @@ def bildschirm_zeichnen():
         mixer.music.set_volume(.1) # Leiser wenn richtig ist
         screen.blit(hintergrund_happy, (0, 0))  # Happy
     else:
-        mixer.music.set_volume(1) # Lauter wenn falsch ist
+        mixer.music.set_volume(.3) # Lauter wenn falsch ist
         screen.blit(hintergrund_sad, (0, 0))  # Sad
     pygame.draw.rect(screen, (255, 255, 255), eingabefeld)  # Draw the entry box
 
@@ -120,7 +122,7 @@ def bildschirm_zeichnen():
         pygame.draw.rect(screen, (0, 0, 0), eingabefeld, 5)
     font = pygame.font.Font(None, 110)
     text_surface = font.render(nutzereingabe, True, (0, 0, 0))
-    screen.blit(text_surface, (breite // 2 - text_surface.get_size()[0] // 2, eingabefeld.y + 5))
+    screen.blit(text_surface, (fenster_breite // 2 - text_surface.get_size()[0] // 2, eingabefeld.y + 5))
 
     # Titel in Rainbow Farben
     font = pygame.font.Font(None, 90)
@@ -130,7 +132,7 @@ def bildschirm_zeichnen():
         int(math.sin(pygame.time.get_ticks() / 1000 + 2) * 127 + 128),
         int(math.sin(pygame.time.get_ticks() / 1000 + 4) * 127 + 128))
     text_surface = font.render("Ist es eine Primzahl?", True, rainbowColor)
-    screen.blit(text_surface, (breite // 2 - text_surface.get_size()[0] // 2, höhe-200))
+    screen.blit(text_surface, (fenster_breite // 2 - text_surface.get_size()[0] // 2, fenster_höhe-200))
 
     pygame.display.flip()
     clock.tick(60)
