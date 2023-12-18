@@ -118,19 +118,19 @@ def bildschirm_zeichnen():
     pygame.draw.rect(screen, (255, 255, 255), eingabefeld)  # Darstellung des Eingabefeldes
 
     if eingabe_ist_primzahl:  # Wenn die Eingabe eine Primzahl ist
-        pygame.draw.rect(screen, (0, 255, 0), eingabefeld, 5)  # Draw the border of the entry box
+        pygame.draw.rect(screen, (0, 255, 0), eingabefeld, 5)  # Box grün umranden
     elif len(nutzereingabe) > 0:  # Wenn die Eingabe nicht leer ist
-        pygame.draw.rect(screen, (255, 0, 0), eingabefeld, 5)  # Draw the border of the entry box
+        pygame.draw.rect(screen, (255, 0, 0), eingabefeld, 5)  # Box rot umranden
     else:  # Wenn die Eingabe leer ist
-        pygame.draw.rect(screen, (0, 0, 0), eingabefeld, 5)
+        pygame.draw.rect(screen, (0, 0, 0), eingabefeld, 5) # Box schwarz umranden
 
     # Text in der Mitte des Eingabefeldes
     font = pygame.font.Font(None, 110)
-    text_surface = font.render(nutzereingabe, True, (0, 0, 0))
-    screen.blit(text_surface, (fenster_breite // 2 - text_surface.get_size()[0] // 2, eingabefeld.y + 5))
+    text_surface = font.render(nutzereingabe, True, (0, 0, 0))  # Text rendern
+    screen.blit(text_surface, (fenster_breite // 2 - text_surface.get_size()[0] // 2, eingabefeld.y + 5))  # Text zeichnen
 
     # Titel in Rainbow Farben
-    font = pygame.font.Font(None, 90)
+    font = pygame.font.Font(None, 90)  # Schriftart und Schriftgröße
     # Rainbow Farben
     rainbowColor: tuple[int, int, int] = (
         int(math.sin(pygame.time.get_ticks() / 1000 + 0) * 127 + 128),  # Rainbow Farben (R - Rot)
