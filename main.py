@@ -52,14 +52,43 @@ pygame.init()  # Initialisiere pygame
 screen = pygame.display.set_mode((fenster_breite, fenster_höhe))  # Erstelle das Fenster
 pygame.display.set_caption("Ist es eine Primzahl.png")  # Setze den Titel des Fensters
 
-hintergrund_neutral = pygame.image.load("MathemannNEUTRAL.png")  # Lade das Bild
-hintergrund_neutral = pygame.transform.scale(hintergrund_neutral, (fenster_breite, fenster_höhe))  # Skaliere das Bild
+originalW = 990
+originalH = 720
+scaleX = fenster_breite / originalW
+scaleY = fenster_höhe / originalH
 
-hintergrund_happy = pygame.image.load("MathemannHAPPY.png")  # Lade das Bild
-hintergrund_happy = pygame.transform.scale(hintergrund_happy, (fenster_breite, fenster_höhe))  # Skaliere das Bild
+hintergrund = pygame.image.load("parts/without.png")  # Lade das Bild
+hintergrund = pygame.transform.scale(hintergrund, (fenster_breite, fenster_höhe))  # Skaliere das Bild
 
-hintergrund_sad = pygame.image.load("MathemannSAD.png")  # Lade das Bild
-hintergrund_sad = pygame.transform.scale(hintergrund_sad, (fenster_breite, fenster_höhe))  # Skaliere das Bild
+eyebrowL = pygame.image.load("parts/left.png")  # Lade das Bild
+eyebrowL = pygame.transform.scale(eyebrowL, (eyebrowL.get_width() * scaleX, eyebrowL.get_height() * scaleY))  # Skaliere das Bild um den gleichen Faktor wie das Hintergrundbild
+eyebrowL_position = {
+    "neutral": (.5, .16, 0),
+    "sad": (.5, .18, -5),
+    "happy": (.5, .16, 20),
+    "current": (0, 0, 0)
+}
+eyebrowL_position["current"] = eyebrowL_position["neutral"]
+
+eyebrowR = pygame.image.load("parts/right.png")  # Lade das Bild
+eyebrowR = pygame.transform.scale(eyebrowR, (eyebrowR.get_width() * scaleX, eyebrowR.get_height() * scaleY))  # Skaliere das Bild um den gleichen Faktor wie das Hintergrundbild
+eyebrowR_position = {
+    "neutral": (.58, .17, 0),
+    "sad": (.58, .15, -15),
+    "happy": (.58, .17, -40),
+    "current": (0, 0, 0)
+}
+eyebrowR_position["current"] = eyebrowR_position["neutral"]
+
+mouth = pygame.image.load("parts/mouth.png")  # Lade das Bild
+mouth = pygame.transform.scale(mouth, (mouth.get_width() * scaleX, mouth.get_height() * scaleY))  # Skaliere das Bild um den gleichen Faktor wie das Hintergrundbild
+mouth_position = {
+    "neutral": (.54, .335, 0),
+    "sad": (.54, .34, 180),
+    "happy": (.55, .34, 0),
+    "current": (0, 0, 0)
+}
+mouth_position["current"] = mouth_position["neutral"]
 
 eingabefeld = pygame.Rect(0, 0, fenster_breite - 100, 80)  # Erstelle das Eingabefeld
 eingabefeld.center = (fenster_breite // 2, fenster_höhe - 100)  # Zentriere das Eingabefeld
@@ -87,7 +116,7 @@ def rücktaste_gedrückt():
 
 # Funktion für das Zeichnen des Bildschirms
 def bildschirm_zeichnen():
-    global programm_läuft, nutzereingabe, eingabe_ist_primzahl, eingabefeld, hintergrund_neutral, hintergrund_happy, hintergrund_sad, clock, screen  # Globale Variablen
+    global programm_läuft, nutzereingabe, eingabe_ist_primzahl, eingabefeld, hintergrund, clock, screen  # Globale Variablen
     # Zeichne den Inhalt des Bildschirms neu
 
     # Events abfragen und verarbeiten (z.B. Tastendrücke)
@@ -105,15 +134,7 @@ def bildschirm_zeichnen():
                     nutzereingabe += event.unicode  # Füge die Zahl der Eingabe hinzu
                     eingabe_ist_primzahl = ist_es_eine_primzahl(int(nutzereingabe))  # Prüfe ob die Eingabe eine Primzahl ist
 
-    if len(nutzereingabe) == 0:  # Wenn die Eingabe leer ist
-        mixer.music.set_volume(.1) # Leiser wenn nichts eingegeben ist
-        screen.blit(hintergrund_neutral, (0, 0))  # Neutral
-    elif eingabe_ist_primzahl:  # Wenn die Eingabe eine Primzahl ist
-        mixer.music.set_volume(.1) # Leiser wenn richtig ist
-        screen.blit(hintergrund_happy, (0, 0))  # Happy
-    else:  # Wenn die Eingabe keine Primzahl ist
-        mixer.music.set_volume(.3) # Lauter wenn falsch ist
-        screen.blit(hintergrund_sad, (0, 0))  # Sad
+    screen.blit(hintergrund, (0, 0))  # Neutral
     
     pygame.draw.rect(screen, (255, 255, 255), eingabefeld)  # Darstellung des Eingabefeldes
 
@@ -123,6 +144,36 @@ def bildschirm_zeichnen():
         pygame.draw.rect(screen, (255, 0, 0), eingabefeld, 5)  # Box rot umranden
     else:  # Wenn die Eingabe leer ist
         pygame.draw.rect(screen, (0, 0, 0), eingabefeld, 5) # Box schwarz umranden
+
+    # Augenbrauen anzeigen (mit easing)
+    state: str = "neutral" # 0 = neutral, 1 = Primzahl, 2 = Keine Primzahl
+    if eingabe_ist_primzahl:
+        state = "happy"
+    elif len(nutzereingabe) > 0:
+        state = "sad"
+    # state wird später geändert aktuell statisch
+    # Links
+    eyebrowL_position["current"] = (eyebrowL_position["current"][0] + (eyebrowL_position[state][0] - eyebrowL_position["current"][0]) * 0.1, # X
+                                    eyebrowL_position["current"][1] + (eyebrowL_position[state][1] - eyebrowL_position["current"][1]) * 0.1, # Y
+                                    eyebrowL_position["current"][2] + (eyebrowL_position[state][2] - eyebrowL_position["current"][2]) * 0.1) # Rotation
+    
+    rotatedL = pygame.transform.rotate(eyebrowL, eyebrowL_position["current"][2]) # Rotiere das Bild
+    screen.blit(rotatedL, (eyebrowL_position["current"][0] * fenster_breite, eyebrowL_position["current"][1] * fenster_höhe))
+
+    # Rechts
+    eyebrowR_position["current"] = (eyebrowR_position["current"][0] + (eyebrowR_position[state][0] - eyebrowR_position["current"][0]) * 0.1, # X
+                                    eyebrowR_position["current"][1] + (eyebrowR_position[state][1] - eyebrowR_position["current"][1]) * 0.1, # Y
+                                    eyebrowR_position["current"][2] + (eyebrowR_position[state][2] - eyebrowR_position["current"][2]) * 0.1) # Rotation
+    
+    rotatedR = pygame.transform.rotate(eyebrowR, eyebrowR_position["current"][2]) # Rotiere das Bild
+    screen.blit(rotatedR, (eyebrowR_position["current"][0] * fenster_breite, eyebrowR_position["current"][1] * fenster_höhe))
+
+    # Mund anzeigen (mit easing)
+    mouth_position["current"] = (mouth_position["current"][0] + (mouth_position[state][0] - mouth_position["current"][0]) * 0.1, # X
+                                 mouth_position["current"][1] + (mouth_position[state][1] - mouth_position["current"][1]) * 0.1, # Y
+                                 mouth_position["current"][2] + (mouth_position[state][2] - mouth_position["current"][2]) * 0.1) # Rotation
+    rotatedM = pygame.transform.rotate(mouth, mouth_position["current"][2]) # Rotiere das Bild
+    screen.blit(rotatedM, (mouth_position["current"][0] * fenster_breite, mouth_position["current"][1] * fenster_höhe))
 
     # Text in der Mitte des Eingabefeldes
     font = pygame.font.Font(None, 110)
