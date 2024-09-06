@@ -15,10 +15,10 @@ Der Mathemann ändert seine Mimik basierend auf dem Ergebnis.
 
 Mathemann ist glücklich, wenn Sie eine Primzahl eingegeben haben.
 
-*Mathman becomes happy, when you enter a prime number*
+*Mathman becomes happy, when you enter a prime number.*
 
 ![Screenshot2](https://github.com/user-attachments/assets/9c3f2b35-2a1e-4f3f-9588-89f894f7d59e)
 
 Mathemann wird traurig, sobald sie eine Nummer eingeben, welche keine Primzahl ist.
 
-*Mathman becomes sad, when you enter a non-prime-number*
+*Mathman becomes sad, when you enter a non-prime-number.*
